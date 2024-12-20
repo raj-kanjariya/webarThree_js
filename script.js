@@ -1,64 +1,74 @@
 const scene = new THREE.Scene();
 const camera = new THREE.Camera();
-scene.add(camera)
+scene.add(camera);
+
 const renderer = new THREE.WebGLRenderer({
-    antialias:true,
-    alpha:true
+    antialias: true,
+    alpha: true
 });
-renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.setAnimationLoop( animate );
-document.body.appendChild( renderer.domElement );
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-var ArToolkitSource = new THREEx.ArToolkitSource({
+// Resize renderer and AR source on window resize or orientation change
+window.addEventListener('resize', () => onResize());
+window.addEventListener('orientationchange', () => onResize());
+
+const ArToolkitSource = new THREEx.ArToolkitSource({
     sourceType: "webcam",
-})
-ArToolkitSource.init(function(){
-    setTimeout(function(){
-        ArToolkitSource.onResizeElement();
-        ArToolkitSource.copyElementSizeTo(renderer.domElement);
-    },2000)
-})
+    sourceWidth: window.innerWidth,
+    sourceHeight: window.innerHeight,
+    displayWidth: window.innerWidth,
+    displayHeight: window.innerHeight,
+});
 
-var ArToolkitContext = new THREEx.ArToolkitContext({
+ArToolkitSource.init(() => {
+    setTimeout(() => {
+        onResize();
+    }, 2000);
+});
+
+function onResize() {
+    ArToolkitSource.onResizeElement();
+    ArToolkitSource.copyElementSizeTo(renderer.domElement);
+    if (ArToolkitContext.arController) {
+        ArToolkitSource.copyElementSizeTo(ArToolkitContext.arController.canvas);
+    }
+}
+
+const ArToolkitContext = new THREEx.ArToolkitContext({
     cameraParametersUrl: 'camera_para.dat',
     detectionMode: 'color_and_matrix',
 });
-ArToolkitContext.init(function(){
+ArToolkitContext.init(() => {
     camera.projectionMatrix.copy(ArToolkitContext.getProjectionMatrix());
 });
-var ArMarkerControls = new THREEx.ArMarkerControls(ArToolkitContext,camera,{
-    type:'pattern',
-    patternUrl:'exposit.patt',
-    changeMatrixMode:'cameraTransformMatrix'
+
+const ArMarkerControls = new THREEx.ArMarkerControls(ArToolkitContext, camera, {
+    type: 'pattern',
+    patternUrl: 'exposit.patt',
+    changeMatrixMode: 'cameraTransformMatrix'
 });
 scene.visible = false;
 
-const geometry = new THREE.CubeGeometry( 1, 1, 1 );
-const material = new THREE.MeshNormalMaterial( { 
+// Create a cube
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshNormalMaterial({
     transparent: true,
-    opacity:0.5,
+    opacity: 0.5,
     side: THREE.DoubleSide
- } );
-const cube = new THREE.Mesh( geometry, material );
+});
+const cube = new THREE.Mesh(geometry, material);
 cube.position.y = geometry.parameters.height / 2;
-scene.add( cube );
+scene.add(cube);
 
-// const fbxLoader = new THREE.FBXLoader();
-// fbxLoader.load('sofa.fbx', (object) => {
-//     object.scale.set(0.01, 0.01, 0.01); // Adjust scale if necessary
-//     object.position.y = 0.5; // Adjust position if needed
-//     scene.add(object);
-// }, undefined, (error) => {
-//     console.error('An error occurred while loading the FBX file:', error);
-// });
-
-
-
+// Animation loop
 function animate() {
     requestAnimationFrame(animate);
-    ArToolkitContext.update(ArToolkitSource.domElement);
-    scene.visible = camera.visible;
-	renderer.render( scene, camera );
-};
+    if (ArToolkitSource.ready) {
+        ArToolkitContext.update(ArToolkitSource.domElement);
+        scene.visible = camera.visible;
+    }
+    renderer.render(scene, camera);
+}
 
 animate();
