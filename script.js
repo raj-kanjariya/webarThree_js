@@ -136,6 +136,7 @@ function objectLoader() {
     const loader = new OBJLoader();
     loader.load('Unity.obj', function (obj) {
 
+        console.log('Unity.obj');
         scene.add(obj);
         obj.traverse(mesh => {
             if (mesh.isMesh)
