@@ -134,7 +134,7 @@ onRenderFcts.push(function () {
 objectLoader();
 function objectLoader() {
     const loader = new OBJLoader();
-    loader.load('unity.obj', function (obj) {
+    loader.load('Unity.obj', function (obj) {
 
         scene.add(obj);
         obj.traverse(mesh => {
