@@ -84,7 +84,7 @@ function initARContext() { // create atToolkitContext
     // MARKER
     arMarkerControls = new ArMarkerControls(arToolkitContext, camera, {
         type: 'pattern',
-        patternUrl: ArToolkitContext.baseURL + './exposit.patt',
+        patternUrl: ArToolkitContext.baseURL + './exposit1.patt',
         changeMatrixMode: 'cameraTransformMatrix'
     })
 
@@ -134,7 +134,7 @@ onRenderFcts.push(function () {
 objectLoader();
 function objectLoader() {
     const loader = new OBJLoader();
-    loader.load('./sofa.obj', function (obj) {
+    loader.load('./Unity.obj', function (obj) {
 
         scene.add(obj);
         obj.traverse(mesh => {
