@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { ArToolkitSource, ArToolkitContext, ArMarkerControls } from 'threex';
 import { OBJLoader } from "./OBJLoader.js";
 
-ArToolkitContext.baseURL = '../';
+ArToolkitContext.baseURL = './';
 
 // init renderer
 var renderer = new THREE.WebGLRenderer({
