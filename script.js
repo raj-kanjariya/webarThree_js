@@ -214,7 +214,7 @@ requestAnimationFrame(function animate(nowMsec) {
 
 document.getElementById("toggleRotation").addEventListener("click", () => {
     rotating = !rotating; // Toggle rotation state
-    document.getElementById("toggleRotation").innerText = rotating ? "Stop Animation" : "Start Animation";
+    document.getElementById("toggleRotation").innerText = rotating ? "Stop Experiance" : "Start Experiance";
 });
 
 
